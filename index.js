@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://<username>:<password>@cluster0.4yggv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wquq5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 console.log(uri);
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
@@ -26,13 +26,13 @@ async function run() {
         const usersCollection = database.collection("users");
         const ordersCollection = database.collection("orders");
         const reviewsCollection = database.collection("reviews");
-
+        //GET Product
         app.get("/drones", async (req, res) => {
             const cursor = dronesCollection.find({});
             const drones = await cursor.toArray();
             res.send(drones);
         });
-
+        //GET Product id
         app.get("/drones/:id", async (req, res) => {
             const id = req.params.id;
             console.log("getting specific drones", id);
@@ -40,27 +40,27 @@ async function run() {
             const service = await dronesCollection.findOne(query);
             res.json(service);
         });
-
+        //Post product
         app.post("/drones", async (req, res) => {
             console.log(req.body);
             const result = await dronesCollection.insertOne(req.body);
             console.log(result);
         });
-
+        //GET USER
         app.get("/users", async (req, res) => {
             const cursor = usersCollection.find({});
             const users = await cursor.toArray();
             res.send(users);
         });
 
-        // GET USER
+        // GET USER EMAIL
         app.get("/users/:email", async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
             const user = await usersCollection.findOne(query);
             let admin = false;
             console.log("user", user?.role);
-
+            //Admin SET
             if (user?.role === "Admin") {
                 admin = true;
             }
@@ -74,7 +74,7 @@ async function run() {
             console.log("user", user);
             res.json(result);
         });
-
+        //PUT USER
         app.put("/users", async (req, res) => {
             const user = req.body;
             console.log("put", user);
@@ -103,13 +103,13 @@ async function run() {
             const result = await usersCollection.updateOne(query, updateDoc, options);
             res.send(result);
         });
-
+        //GET Reviews
         app.get("/reviews", async (req, res) => {
             const cursor = reviewsCollection.find({});
             const reviews = await cursor.toArray();
             res.send(reviews);
         });
-
+        //GET Reviews id
         app.get("/reviews/:id", async (req, res) => {
             const id = req.params.id;
             console.log("getting specific reviews", id);
@@ -117,19 +117,19 @@ async function run() {
             const review = await reviewsCollection.findOne(query);
             res.json(review);
         });
-
+        //POST Reviews
         app.post("/reviews", async (req, res) => {
             console.log(req.body);
             const result = await reviewsCollection.insertOne(req.body);
             console.log(result);
         });
-
+        //GET Orders
         app.get("/orders", async (req, res) => {
             const cursor = ordersCollection.find({});
             const orders = await cursor.toArray();
             res.send(orders);
         });
-
+        //GET Order ID
         app.get("/orders/:id", async (req, res) => {
             const id = req.params.id;
             console.log("getting specific order", id);
@@ -137,14 +137,14 @@ async function run() {
             const order = await ordersCollection.findOne(query);
             res.json(order);
         });
-
+        //POST Orders
         app.post("/orders", async (req, res) => {
             console.log(req.body);
             const result = await ordersCollection.insertOne(req.body);
             console.log(result);
         });
 
-        // delete event
+        // delet order
         app.delete("/orders/:id", async (req, res) => {
             console.log(req.params.id);
             const result = await ordersCollection.deleteOne({
@@ -191,10 +191,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-    res.send("Milstone Drone Is Activate");
+    res.send("TAT Milestone-shop Server is Active");
 });
 
 app.listen(port, () => {
     console.log("server running at port", port);
 });
-// const uri = `mongodb+srv://<username>:<password>@cluster0.4yggv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
